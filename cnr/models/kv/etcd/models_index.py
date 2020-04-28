@@ -14,7 +14,7 @@ class ModelsIndexEtcd(ModelsIndexBase):
         try:
             data = etcd_client.read(path).value
         except etcd.EtcdKeyError as excp:
-            raise ResourceNotFound(excp.message, {"path": path})
+            raise ResourceNotFound(str(excp), {"path": path})
         return data
 
     def _write_raw_data(self, key, data):

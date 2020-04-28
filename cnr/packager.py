@@ -46,11 +46,19 @@ class Package(object):
 
     def _load_blob(self, blob, b64_encoded):
         if b64_encoded:
-            self.b64blob = blob
-            self.blob = base64.b64decode(blob)
+            if isinstance(blob, bytes):
+                self.b64blob = blob
+                self.blob = base64.b64decode(blob)
+            else:
+                self.b64blob = blob.encode("ascii")
+                self.blob = base64.b64decode(blob.encode("ascii"))
         else:
-            self.b64blob = base64.b64encode(blob)
-            self.blob = blob
+            if isinstance(blob, bytes):
+                self.b64blob = base64.b64encode(blob)
+                self.blob = blob
+            else:
+                self.b64blob = base64.b64encode(blob.encode("ascii"))
+                self.blob = blob.encode("ascii")
 
     def load(self, blob, b64_encoded=True):
         self._digest = None
@@ -70,7 +78,7 @@ class Package(object):
             destfile.write(self.blob)
 
     def tree(self, directory=None):
-        files = self.files.keys()
+        files = list(self.files.keys())
         files.sort()
         if directory is not None:
             filtered = [x for x in files if x.startswith(directory)]

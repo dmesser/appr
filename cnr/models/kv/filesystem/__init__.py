@@ -4,9 +4,7 @@ import shutil
 from cnr.utils import Singleton, mkdir_p
 
 
-class FilesystemClient(object):
-    __metaclass__ = Singleton
-
+class FilesystemClient(object, metaclass=Singleton):
     def __init__(self, path):
         self.base_path = path
 
@@ -20,7 +18,7 @@ class FilesystemClient(object):
                 expiration = float(f.read())
         if time.time() >= expiration:
             next_expiration = time.time() + ttl
-            return self.set(key, str(next_expiration), None)
+            return self.set(key, str(next_expiration).encode("utf-8"), None)
         return False
 
     def set(self, key, data, nx=None):

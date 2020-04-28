@@ -10,12 +10,12 @@ from cnr.exception import (InvalidRelease,
 
 
 def convert_utf8(data):
-    if isinstance(data, basestring):
-        return str(data)
+    if isinstance(data, bytes):
+        return data.decode("utf-8")
     elif isinstance(data, collections.Mapping):
-        return dict(map(convert_utf8, data.iteritems()))
+        return dict(list(map(convert_utf8, iter(data.items()))))
     elif isinstance(data, collections.Iterable):
-        return type(data)(map(convert_utf8, data))
+        return type(data)(list(map(convert_utf8, data)))
     else:
         return data
 
@@ -53,7 +53,7 @@ class TestModels:
         sorting = itemgetter('package', "mediaType", "release")
         dump = convert_utf8(dump)
         expected_packages = convert_utf8(dbdata1['packages'])
-        for x in xrange(len(expected_packages)):
+        for x in range(len(expected_packages)):
             dump[x].pop("created_at")
             expected_packages[x].pop("created_at")
 
@@ -77,7 +77,7 @@ class TestModels:
         blob = db_with_data1.Blob.get("titi/rocketchat",
                                       "d3b54b7912fe770a61b59ab612a442eac52a8a5d8d05dbe92bf8f212d68aaa80")
         assert blob.digest == "d3b54b7912fe770a61b59ab612a442eac52a8a5d8d05dbe92bf8f212d68aaa80"
-        assert blob.size == 778L
+        assert blob.size == 778
 
     @pytest.mark.integration
     def test_get_package_absent_manifest(self, db_with_data1):
@@ -169,7 +169,7 @@ class TestModels:
     @pytest.mark.integration
     def test_all_channels(self, db_with_data1):
         channels = [c.name for c in db_with_data1.Channel.all('titi/rocketchat')]
-        assert sorted(channels) == sorted([u'dev', u'stable'])
+        assert sorted(channels) == sorted(['dev', 'stable'])
 
     @pytest.mark.integration
     def test_all_channels_absent_package(self, db_with_data1):
@@ -184,7 +184,7 @@ class TestModels:
     @pytest.mark.integration
     def test_channel_releases(self, db_with_data1):
         channel = db_with_data1.Channel.get('stable', 'titi/rocketchat')
-        assert sorted(channel.releases()) == sorted([u'1.0.1', u'2.0.1'])
+        assert sorted(channel.releases()) == sorted(['1.0.1', '2.0.1'])
 
     @pytest.mark.integration
     def test_channel_no_releases(self, db_with_data1):
@@ -218,7 +218,7 @@ class TestModels:
     def test_channel_delete_releases(self, db_with_data1):
         channel = db_with_data1.Channel.get('stable', 'titi/rocketchat')
         package = db_with_data1.Package.get('titi/rocketchat', '2.0.1', "kpm")
-        assert sorted(channel.releases()) == sorted([u'1.0.1', u'2.0.1'])
+        assert sorted(channel.releases()) == sorted(['1.0.1', '2.0.1'])
         assert 'stable' in package.channels(db_with_data1.Channel)
         assert channel.current == "2.0.1"
         channel.remove_release('2.0.1')
@@ -231,7 +231,7 @@ class TestModels:
     def test_channel_delete_all_releases(self, db_with_data1):
         channel = db_with_data1.Channel.get('dev', 'titi/rocketchat')
         package = db_with_data1.Package.get('titi/rocketchat', '1.0.1', "kpm")
-        assert sorted(channel.releases()) == sorted([u'1.0.1'])
+        assert sorted(channel.releases()) == sorted(['1.0.1'])
         assert 'dev' in package.channels(db_with_data1.Channel)
         assert channel.current == "1.0.1"
         channel.remove_release('1.0.1')

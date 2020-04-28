@@ -148,11 +148,11 @@ class ModelsIndexBase(object):
     def releases(self, media_type=None):
         if media_type is not None:
             result = []
-            for release_name, release in self.releases_data['releases'].iteritems():
+            for release_name, release in self.releases_data['releases'].items():
                 if media_type in release['manifests']:
                     result.append(release_name)
         else:
-            result = self.releases_data['releases'].keys()
+            result = list(self.releases_data['releases'].keys())
         return result
 
     def release_manifests(self, release):
@@ -164,11 +164,11 @@ class ModelsIndexBase(object):
 
     def release_formats(self, release=None):
         if release:
-            return self.release_manifests(release).keys()
+            return list(self.release_manifests(release).keys())
         else:
             formats = set()
-            for _, release in self.releases_data['releases'].iteritems():
-                [formats.add(x) for x in release['manifests'].keys()]
+            for _, release in self.releases_data['releases'].items():
+                [formats.add(x) for x in list(release['manifests'].keys())]
             return list(formats)
 
     def release(self, release, media_type):
@@ -183,7 +183,7 @@ class ModelsIndexBase(object):
     def channels(self):
         data = self.releases_data['channels']
         if data:
-            return data.values()
+            return list(data.values())
         else:
             return []
 
@@ -272,7 +272,7 @@ class ModelsIndexBase(object):
         if not self.ischannel_exists(channel):
             raise_channel_not_found(self.package, channel)
 
-        releases = [release for release, x in self.releases_data['releases'].iteritems() if channel in x['channels']]
+        releases = [release for release, x in self.releases_data['releases'].items() if channel in x['channels']]
         ordered_releases = [str(x) for x in sorted(cnr.semver.versions(releases, False),
                                                    reverse=True)]
         return ordered_releases
@@ -286,10 +286,10 @@ class ModelsIndexBase(object):
         result = []
         if namespace is not None:
             if namespace in self.packages_data['packages']:
-                result = ["%s/%s" % (namespace, name) for name in self.packages_data['packages'][namespace].keys()]
+                result = ["%s/%s" % (namespace, name) for name in list(self.packages_data['packages'][namespace].keys())]
         else:
-            for namespace, packages in self.packages_data['packages'].iteritems():
-                for name in packages.keys():
+            for namespace, packages in self.packages_data['packages'].items():
+                for name in list(packages.keys()):
                     result.append("%s/%s" % (namespace, name))
         return result
 
@@ -300,10 +300,10 @@ class ModelsIndexBase(object):
         result = []
         if namespace is not None:
             if namespace in self.packages_data['packages']:
-                result = self.packages_data['packages'][namespace].values()
+                result = list(self.packages_data['packages'][namespace].values())
         else:
-            for namespace, packages in self.packages_data['packages'].iteritems():
-                for _, data in packages.iteritems():
+            for namespace, packages in self.packages_data['packages'].items():
+                for _, data in packages.items():
                     result.append(data)
         return result
 
@@ -337,7 +337,7 @@ class ModelsIndexBase(object):
         raise NotImplementedError
 
     def _write_data(self, key, data):
-        return self._write_raw_data(key, json.dumps(data))
+        return self._write_raw_data(key, json.dumps(data).encode("utf-8"))
 
     def _write_raw_data(self, key, data):
         raise NotImplementedError

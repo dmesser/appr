@@ -63,6 +63,7 @@ def test_error():
 
 def _pull(data, json_format=True):
     if json_format:
+        print("JSONIFY DATA:",  data)
         resp = jsonify(data)
     else:
         resp = current_app.make_response(b64decode(data['blob']))

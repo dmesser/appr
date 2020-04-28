@@ -48,7 +48,7 @@ def version():
 
 @info_app.route("/routes")
 def routes():
-    import urllib
+    from urllib.parse import unquote
     output = []
     for rule in current_app.url_map.iter_rules():
         options = {}
@@ -56,7 +56,7 @@ def routes():
             options[arg] = "[{0}]".format(arg)
         methods = ','.join(rule.methods)
         url = url_for(rule.endpoint, **options)
-        line = urllib.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
+        line = urllib.parse.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
         output.append(line)
     lines = []
     for line in sorted(output):

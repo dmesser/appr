@@ -149,7 +149,7 @@ class PackageBase(object):
         try:
             semantic_version.Version(release)
         except ValueError as e:
-            raise InvalidRelease(e.message, {"version": release})
+            raise InvalidRelease(str(e), {"version": release})
         return None
 
     @classmethod
@@ -175,7 +175,7 @@ class PackageBase(object):
             try:
                 return select_version(releases, str(release_query), stable)
             except ValueError as e:
-                raise InvalidRelease(e.message, {"release": release_query})
+                raise InvalidRelease(str(e), {"release": release_query})
 
     def pull(self, release_query=None, media_type=None):
         media_type = get_media_type(media_type)

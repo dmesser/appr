@@ -37,7 +37,7 @@ def _get_package(package, version_query, media_type, package_class):
 def pull_blob(package, digest, blob_class):
     blob = blob_class.get(package, digest)
     resp = {"package": package,
-            "blob": blob.b64blob,
+            "blob": blob.b64blob.decode("ascii"),
             "release": digest,
             "filename": "%s_%s.tar.gz" % (package.replace("/", "_"), digest[0:8])}
     return resp
@@ -80,7 +80,7 @@ def pull(package, version_query, media_type, package_class, blob_class):
     packagemodel = _get_package(package, version_query, media_type, package_class=package_class)
     blob = blob_class.get(package, packagemodel.digest)
     resp = {"package": package,
-            "blob": blob.b64blob,
+            "blob": blob.b64blob.decode("ascii"),
             "release": packagemodel.release,
             "filename": "%s_%s.tar.gz" % (packagemodel.package.replace("/", "_"), packagemodel.release)}
     return resp

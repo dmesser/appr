@@ -63,7 +63,7 @@ def kubeui_package():
 
 @pytest.fixture(scope='module')
 def package_b64blob():
-    return """\
+    return b"""\
 H4sICF8BsVcC/3RpdF9yb2NrZXRjaGF0XzEuMTAuMGt1Yi50YXIA7Zddb9MwFIZ7nV9hlYve0DRpmgZFgJjGhCat2zQGNwhNXup1Vu04st\
 1IVZX/znGTtMnYWAWj08DPRT6Ofezjr/ckF0cHHydHLp92/h4eMB6PzN2PQq95L4lGHX84HkfjcBz4YPeDKPA6yOvsgYXSWCLUwYzMJE4fn\
 IfHyquhbO4vBEeKZE50cou1826L47xCxylMDWOOM884ouULalR3OpYXD8cpvSFKu0vM2fOcf98LAjj/URgE/ggK4PyHPpjs+d8D/X7fyXAy\
